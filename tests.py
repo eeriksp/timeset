@@ -33,5 +33,14 @@ class TimeRangeBooleanTest(unittest.TestCase):
         self.assertFalse(t)
 
 
+class TimeRangeTimedeltaTest(unittest.TestCase):
+    def test_timedelta_two_hours(self):
+        t = TimeRange(start=start, end=end)
+        self.assertTrue(t)
+
+    def test_timedelta_zero(self):
+        t = TimeRange()
+        self.assertFalse(t)
+
 if __name__ == '__main__':
     unittest.main()
