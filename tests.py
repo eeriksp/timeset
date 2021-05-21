@@ -23,5 +23,15 @@ class TimeRangeInitializationTest(unittest.TestCase):
             TimeRange(start=end, end=start)
 
 
+class TimeRangeBooleanTest(unittest.TestCase):
+    def test_bool_true(self):
+        t = TimeRange(start=start, end=end)
+        self.assertTrue(t)
+
+    def test_bool_false(self):
+        t = TimeRange()
+        self.assertFalse(t)
+
+
 if __name__ == '__main__':
     unittest.main()
