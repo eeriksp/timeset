@@ -1,5 +1,5 @@
 import unittest
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from timeset import TimeRange
 
@@ -9,7 +9,6 @@ string_repr = "TimeRange(start=datetime.datetime(2021, 5, 20, 12, 12), end=datet
 
 
 class TimeRangeInitializationTest(unittest.TestCase):
-
     def test_initialization_with_start_and_end(self):
         t = TimeRange(start=start, end=end)
         self.assertEqual(str(t), string_repr)
@@ -36,11 +35,12 @@ class TimeRangeBooleanTest(unittest.TestCase):
 class TimeRangeTimedeltaTest(unittest.TestCase):
     def test_timedelta_two_hours(self):
         t = TimeRange(start=start, end=end)
-        self.assertTrue(t)
+        self.assertEqual(t.as_timedelta, timedelta(hours=2))
 
     def test_timedelta_zero(self):
         t = TimeRange()
-        self.assertFalse(t)
+        self.assertEqual(t.as_timedelta, timedelta(hours=0))
+
 
 if __name__ == '__main__':
     unittest.main()

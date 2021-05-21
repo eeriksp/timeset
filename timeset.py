@@ -44,4 +44,4 @@ class TimeRange:
 
     @property
     def as_timedelta(self) -> timedelta:
-        return sum([p.as_timedelta for p in self._periods])
+        return sum([p.as_timedelta for p in self._periods], start=timedelta())
