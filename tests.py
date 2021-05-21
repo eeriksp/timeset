@@ -18,6 +18,10 @@ class TimeRangeInitializationTest(unittest.TestCase):
         t = TimeRange()
         self.assertEqual(str(t), "TimeRange()")
 
+    def test_start_end_integrity(self):
+        with self.assertRaises(ValueError):
+            TimeRange(start=end, end=start)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -8,6 +8,10 @@ class ContinuousTimeRange:
     start: datetime
     end: datetime
 
+    def __post_init__(self):
+        if self.start > self.end:
+            raise ValueError("Start cannot be greater than end.")
+
 
 class TimeRange:
 
