@@ -3,8 +3,9 @@ from datetime import datetime, timedelta
 
 from timeset import TimeRange
 
-start = datetime(2021, 5, 20, 12, 12)
-end = datetime(2021, 5, 20, 14, 12)
+date = (2021, 5, 20)
+start = datetime(*date, 12, 12)
+end = datetime(*date, 14, 12)
 string_repr = "TimeRange(start=datetime.datetime(2021, 5, 20, 12, 12), end=datetime.datetime(2021, 5, 20, 14, 12))"
 
 
@@ -41,6 +42,7 @@ class TimeRangeTimedeltaTest(unittest.TestCase):
         t = TimeRange()
         self.assertEqual(t.as_timedelta, timedelta(hours=0))
 
+
 class TimeRangeContainsTest(unittest.TestCase):
     def test_contains(self):
         t = TimeRange(start=start, end=end)
@@ -49,6 +51,23 @@ class TimeRangeContainsTest(unittest.TestCase):
     def test_does_not_contain(self):
         t = TimeRange(start=start, end=end)
         self.assertFalse(datetime(2021, 5, 20, 16, 12) in t)
+
+
+class TimeRangeAdditionTest(unittest.TestCase):
+    def test_no_overlap(self):
+        t1 = TimeRange.with_duration(start=datetime(*date, 12), duration=timedelta(hours=2))
+        t2 = TimeRange.with_duration(start=datetime(*date, 16), duration=timedelta(hours=2))
+        self.assertEqual((t1 + t2).as_timedelta, timedelta(hours=4))
+
+    def test_one_contains_another(self):
+        t1 = TimeRange.with_duration(start=datetime(*date, 12), duration=timedelta(hours=2))
+        t2 = TimeRange.with_duration(start=datetime(*date, 13), duration=timedelta(hours=1))
+        self.assertEqual((t1 + t2).as_timedelta, timedelta(hours=2))
+
+    def test_overlap(self):
+        t1 = TimeRange.with_duration(start=datetime(*date, 12), duration=timedelta(hours=3))
+        t2 = TimeRange.with_duration(start=datetime(*date, 13), duration=timedelta(hours=3))
+        self.assertEqual((t1 + t2).as_timedelta, timedelta(hours=4))
 
 
 if __name__ == '__main__':

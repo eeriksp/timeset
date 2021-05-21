@@ -1,3 +1,4 @@
+from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import overload, Optional, Set
@@ -47,6 +48,15 @@ class TimeRange:
 
     def __contains__(self, moment: datetime) -> bool:
         return any([moment in p for p in self._periods])
+
+    def __add__(self, other) -> TimeRange:
+        if not type(other) == type(self):
+            return NotImplemented
+        # TODO implement the rest
+
+    @classmethod
+    def with_duration(cls, start: datetime, duration: timedelta) -> TimeRange:
+        return cls(start, start + duration)
 
     @property
     def as_timedelta(self) -> timedelta:
