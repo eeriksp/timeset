@@ -41,6 +41,15 @@ class TimeRangeTimedeltaTest(unittest.TestCase):
         t = TimeRange()
         self.assertEqual(t.as_timedelta, timedelta(hours=0))
 
+class TimeRangeContainsTest(unittest.TestCase):
+    def test_contains(self):
+        t = TimeRange(start=start, end=end)
+        self.assertTrue(datetime(2021, 5, 20, 12, 13) in t)
+
+    def test_does_not_contain(self):
+        t = TimeRange(start=start, end=end)
+        self.assertTrue(datetime(2021, 5, 20, 12, 19) in t)
+
 
 if __name__ == '__main__':
     unittest.main()

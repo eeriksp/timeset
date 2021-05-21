@@ -12,6 +12,9 @@ class ContinuousTimeRange:
         if self.start > self.end:
             raise ValueError("Start cannot be greater than end.")
 
+    def __contains__(self, moment: datetime) -> bool:
+        return self.start <= moment <= self.end
+
     @property
     def as_timedelta(self) -> timedelta:
         return self.end - self.start
@@ -41,6 +44,9 @@ class TimeRange:
 
     def __bool__(self) -> bool:
         return len(self._periods) != 0
+
+    def __contains__(self, moment: datetime) -> bool:
+        return any([moment in p for p in self._periods])
 
     @property
     def as_timedelta(self) -> timedelta:
