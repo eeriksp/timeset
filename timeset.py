@@ -20,6 +20,23 @@ class ContinuousTimeRange:
     def as_timedelta(self) -> timedelta:
         return self.end - self.start
 
+    def __and__(self, other: ContinuousTimeRange) -> Optional[ContinuousTimeRange]:
+        if type(self) != type(other):
+            return NotImplemented
+        if not self.intersects_with(other):
+            return None
+        return ContinuousTimeRange(max(self.start, other.start), min(self.start, other.start))
+
+    def __add__(self, other) -> Optional[ContinuousTimeRange]:
+        if type(self) != type(other):
+            return NotImplemented
+        if not self.intersects_with(other):
+            return None
+        return ContinuousTimeRange(min(self.start, other.start), max(self.end, other.end))
+
+    def intersects_with(self, other: ContinuousTimeRange) -> bool:
+        return other.start in self or other.end in self
+
 
 class TimeRange:
 
@@ -50,9 +67,20 @@ class TimeRange:
         return any([moment in p for p in self._periods])
 
     def __add__(self, other) -> TimeRange:
-        if not type(other) == type(self):
+        if type(self) != type(other):
             return NotImplemented
-        # TODO implement the rest
+        intersectionless_periods: Set[ContinuousTimeRange] = set()
+        for p in {*self._periods, *other._periods}:
+            for per in intersectionless_periods:
+                if p.intersects_with(per):
+                    intersectionless_periods.discard(per)
+                    intersectionless_periods.add(p + per)
+                    break
+            else:
+                intersectionless_periods.add(p)
+        result = TimeRange()
+        result._periods = intersectionless_periods
+        return result
 
     @classmethod
     def with_duration(cls, start: datetime, duration: timedelta) -> TimeRange:
