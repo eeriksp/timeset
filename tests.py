@@ -10,16 +10,49 @@ string_repr = "TimeRange(start=datetime.datetime(2021, 5, 20, 12, 12), end=datet
 
 
 class ContinuousTimeRangeTest(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self.timerange = ContinuousTimeRange(start, end)
+
     def test_initialization(self):
         with self.assertRaisesRegex(ValueError, "Start cannot be later than end."):
             ContinuousTimeRange(end, start)
 
     def test_contains(self):
-        timerange= ContinuousTimeRange(start, end)
-        self.assertTrue(datetime(*date, 13, 12) in timerange)
+        self.assertTrue(datetime(*date, 13, 12) in self.timerange)
         # Assert that endpoints are included
-        self.assertTrue(start in timerange)
-        self.assertTrue(end in timerange)
+        self.assertTrue(start in self.timerange)
+        self.assertTrue(end in self.timerange)
+
+    def test_does_not_contain(self):
+        self.assertFalse(datetime(*date, 22, 12) in self.timerange)
+
+    def test_as_timedelta(self):
+        self.assertEqual(ContinuousTimeRange(start, start).as_timedelta, timedelta(hours=0))
+        self.assertEqual(self.timerange.as_timedelta, timedelta(hours=2))
+
+    def test_intersection(self):
+        union1 = self.timerange & ContinuousTimeRange(datetime(*date, 13, 12), datetime(*date, 22, 12))
+        self.assertEqual(union1, ContinuousTimeRange(datetime(*date, 13, 12), end))
+
+        union2 = self.timerange & ContinuousTimeRange(start, start)
+        self.assertEqual(union2, ContinuousTimeRange(start, start))
+
+    def test_union(self):
+        union1 = self.timerange + ContinuousTimeRange(datetime(*date, 13, 12), datetime(*date, 15, 12))
+        self.assertEqual(union1, ContinuousTimeRange(start, datetime(*date, 15, 12)))
+
+        union2 = self.timerange + ContinuousTimeRange(start, start)
+        self.assertEqual(union2, ContinuousTimeRange(start, end))
+
+    def test_intersects_with(self):
+        self.assertTrue(self.timerange.intersects_with(
+            ContinuousTimeRange(datetime(*date, 13, 12), datetime(*date, 15, 12))))
+
+    def test_does_not_intersect_with(self):
+        self.assertFalse(self.timerange.intersects_with(
+            ContinuousTimeRange(datetime(*date, 18, 12), datetime(*date, 19, 12))))
+
 
 class TimeRangeInitializationTest(unittest.TestCase):
     def test_initialization_with_start_and_end(self):

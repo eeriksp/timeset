@@ -25,7 +25,7 @@ class ContinuousTimeRange:
             return NotImplemented
         if not self.intersects_with(other):
             return None
-        return ContinuousTimeRange(max(self.start, other.start), min(self.start, other.start))
+        return ContinuousTimeRange(max(self.start, other.start), min(self.end, other.end))
 
     def __add__(self, other) -> Optional[ContinuousTimeRange]:
         if type(self) != type(other):
