@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime, timedelta
 
-from timeset import TimeRange
+from timeset import TimeRange, ContinuousTimeRange
 
 date = (2021, 5, 20)
 start = datetime(*date, 12, 12)
@@ -9,6 +9,17 @@ end = datetime(*date, 14, 12)
 string_repr = "TimeRange(start=datetime.datetime(2021, 5, 20, 12, 12), end=datetime.datetime(2021, 5, 20, 14, 12))"
 
 
+class ContinuousTimeRangeTest(unittest.TestCase):
+    def test_initialization(self):
+        with self.assertRaisesRegex(ValueError, "Start cannot be later than end."):
+            ContinuousTimeRange(end, start)
+
+    def test_contains(self):
+        timerange= ContinuousTimeRange(start, end)
+        self.assertTrue(datetime(*date, 13, 12) in timerange)
+        # Assert that endpoints are included
+        self.assertTrue(start in timerange)
+        self.assertTrue(end in timerange)
 
 class TimeRangeInitializationTest(unittest.TestCase):
     def test_initialization_with_start_and_end(self):
