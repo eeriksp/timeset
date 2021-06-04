@@ -48,12 +48,19 @@ class TimeRange:
     def __init__(self, start: datetime, end: datetime):
         pass
 
-    def __init__(self, start: Optional[datetime] = None, end: Optional[datetime] = None):
+    @overload
+    def __init__(self, cls, start: datetime, duration: timedelta):
+        pass
+
+    def __init__(self, start: Optional[datetime] = None,
+                 end: Optional[datetime] = None,
+                 duration: Optional[timedelta] = None):
         self._periods: Set[ContinuousTimeRange] = set()
-        if start and end:
-            self._periods.add(ContinuousTimeRange(start, end))
-        elif start or end:
-            raise ValueError("A `TimeRange` must have either none or both `start` and `end` specified.")
+        if (start and not (end or duration)) or (end and duration):
+            raise ValueError("Allowed combination of constructor parameters are:\n  "
+                             "* Empty constructor\n  * `start` & `end`\n  * `start` & `duration`")
+        if start:
+            self._periods.add(ContinuousTimeRange(start, end or start + duration))
 
     def __repr__(self) -> str:
         return ' + '.join(
@@ -81,10 +88,6 @@ class TimeRange:
         result = TimeRange()
         result._periods = intersectionless_periods
         return result
-
-    @classmethod
-    def with_duration(cls, start: datetime, duration: timedelta) -> TimeRange:
-        return cls(start, start + duration)
 
     @property
     def as_timedelta(self) -> timedelta:

@@ -100,18 +100,18 @@ class TimeRangeContainsTest(unittest.TestCase):
 
 class TimeRangeAdditionTest(unittest.TestCase):
     def test_no_overlap(self):
-        t1 = TimeRange.with_duration(start=datetime(*date, 12), duration=timedelta(hours=2))
-        t2 = TimeRange.with_duration(start=datetime(*date, 16), duration=timedelta(hours=2))
+        t1 = TimeRange(start=datetime(*date, 12), duration=timedelta(hours=2))
+        t2 = TimeRange(start=datetime(*date, 16), duration=timedelta(hours=2))
         self.assertEqual((t1 + t2).as_timedelta, timedelta(hours=4))
 
     def test_one_contains_another(self):
-        t1 = TimeRange.with_duration(start=datetime(*date, 12), duration=timedelta(hours=2))
-        t2 = TimeRange.with_duration(start=datetime(*date, 13), duration=timedelta(hours=1))
+        t1 = TimeRange(start=datetime(*date, 12), duration=timedelta(hours=2))
+        t2 = TimeRange(start=datetime(*date, 13), duration=timedelta(hours=1))
         self.assertEqual((t1 + t2).as_timedelta, timedelta(hours=2))
 
     def test_overlap(self):
-        t1 = TimeRange.with_duration(start=datetime(*date, 12), duration=timedelta(hours=3))
-        t2 = TimeRange.with_duration(start=datetime(*date, 13), duration=timedelta(hours=3))
+        t1 = TimeRange(start=datetime(*date, 12), duration=timedelta(hours=3))
+        t2 = TimeRange(start=datetime(*date, 13), duration=timedelta(hours=3))
         self.assertEqual((t1 + t2).as_timedelta, timedelta(hours=4))
 
 
