@@ -68,6 +68,9 @@ class TimeRange:
         ) or "TimeRange()"
 
     def __bool__(self) -> bool:
+        """
+        A TimeRange evaluates to True if its duration is grater than zero.
+        """
         return len(self._periods) != 0
 
     def __contains__(self, moment: datetime) -> bool:
