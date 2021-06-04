@@ -55,13 +55,19 @@ class ContinuousTimeRangeTest(unittest.TestCase):
 
 
 class TimeRangeInitializationTest(unittest.TestCase):
+    def test_empty_initialization(self):
+        t = TimeRange()
+        self.assertEqual(str(t), "TimeRange()")
+
     def test_initialization_with_start_and_end(self):
         t = TimeRange(start=start, end=end)
         self.assertEqual(str(t), string_repr)
 
-    def test_empty_initialization(self):
-        t = TimeRange()
-        self.assertEqual(str(t), "TimeRange()")
+    def test_initialization_with_start_and_duration(self):
+        t = TimeRange(start=start, duration=timedelta(hours=8))
+        self.assertEqual(t.as_timedelta, timedelta(hours=8))
+        self.assertTrue(start in t)
+        self.assertTrue(start + timedelta(hours=8) in t)
 
     def test_start_end_integrity(self):
         with self.assertRaises(ValueError):
