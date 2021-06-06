@@ -69,7 +69,25 @@ class ContinuousTimeRangeTest(unittest.TestCase):
         self.assertFalse(self.timerange != ContinuousTimeRange(self.timerange.start, self.timerange.end))
         self.assertFalse(self.timerange == ContinuousTimeRange(self.timerange.start, self.timerange.start))
 
-    # TODO test comparison
+    def test_superset(self):
+        # Is superset
+        self.assertTrue(self.timerange >= ContinuousTimeRange(datetime(*date, 13, 12), datetime(*date, 13, 14)))
+        # Is superset (one edge in common)
+        self.assertTrue(self.timerange >= ContinuousTimeRange(datetime(*date, 12, 12), datetime(*date, 13, 14)))
+        # Is not superset (actually self is subset)
+        self.assertFalse(self.timerange >= ContinuousTimeRange(datetime(*date, 12, 12), datetime(*date, 22, 14)))
+        # Is not superset (no intersection)
+        self.assertFalse(self.timerange >= ContinuousTimeRange(datetime(*date, 18, 12), datetime(*date, 22, 14)))
+
+    def test_subset(self):
+        # Is subset
+        self.assertTrue(self.timerange <= ContinuousTimeRange(datetime(*date, 10, 12), datetime(*date, 18, 14)))
+        # Is subset (one edge in common)
+        self.assertTrue(self.timerange <= ContinuousTimeRange(datetime(*date, 12, 12), datetime(*date, 18, 14)))
+        # Is not subset (actually self is superset)
+        self.assertFalse(self.timerange <= ContinuousTimeRange(datetime(*date, 12, 12), datetime(*date, 13, 14)))
+        # Is not subset (no intersection)
+        self.assertFalse(self.timerange <= ContinuousTimeRange(datetime(*date, 18, 12), datetime(*date, 22, 14)))
 
 
 class TimeRangeInitializationTest(unittest.TestCase):
