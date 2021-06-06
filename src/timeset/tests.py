@@ -62,7 +62,13 @@ class ContinuousTimeRangeTest(unittest.TestCase):
         self.assertFalse(self.timerange.intersects_with(
             ContinuousTimeRange(datetime(*date, 18, 12), datetime(*date, 19, 12))))
 
-    # TODO test equality
+    def test_equality(self):
+        self.assertTrue(self.timerange == ContinuousTimeRange(self.timerange.start, self.timerange.end))
+
+    def test_inequality(self):
+        self.assertFalse(self.timerange != ContinuousTimeRange(self.timerange.start, self.timerange.end))
+        self.assertFalse(self.timerange == ContinuousTimeRange(self.timerange.start, self.timerange.start))
+
     # TODO test comparison
 
 
