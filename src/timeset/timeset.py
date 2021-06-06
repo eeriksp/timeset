@@ -1,7 +1,10 @@
 from __future__ import annotations
+
+import calendar
+from abc import abstractmethod, abstractproperty
 from dataclasses import dataclass
-from datetime import datetime, timedelta
-from typing import overload, Optional, Set
+from datetime import datetime, date, timedelta
+from typing import overload, Optional, Set, Protocol
 
 
 @dataclass(frozen=True)
@@ -17,7 +20,7 @@ class ContinuousTimeRange:
         return self.start <= moment <= self.end
 
     @property
-    def as_timedelta(self) -> timedelta:
+    def to_timedelta(self) -> timedelta:
         return self.end - self.start
 
     def __and__(self, other: ContinuousTimeRange) -> Optional[ContinuousTimeRange]:
@@ -34,8 +37,20 @@ class ContinuousTimeRange:
             return None
         return ContinuousTimeRange(min(self.start, other.start), max(self.end, other.end))
 
+    def __ge__(self, other) -> bool:  # TODO TEST
+        """
+        Check if self (S) is a superset of other (O): S ⊇ O
+        """
+        return self.start <= other.start and other.end <= self.end
+
+    def __le__(self, other) -> bool:  # TODO TEST
+        """
+        Check if self (S) is a subset of other (O): S ⊆ O
+        """
+        return other.start <= self.start and self.end <= other.end
+
     def intersects_with(self, other: ContinuousTimeRange) -> bool:
-        return other.start in self or other.end in self
+        return other.start in self or other.end in self or self <= other
 
 
 class TimeRange:
@@ -77,6 +92,9 @@ class TimeRange:
         return any([moment in p for p in self._periods])
 
     def __add__(self, other) -> TimeRange:
+        """
+        Find the union of the two TimeRange's: A ⋃ B.
+        """
         if type(self) != type(other):
             return NotImplemented
         intersectionless_periods: Set[ContinuousTimeRange] = set()
@@ -92,6 +110,43 @@ class TimeRange:
         result._periods = intersectionless_periods
         return result
 
+    def __and__(self, other: TimeRange) -> Optional[TimeRange]:
+        """
+        Find the intersection of the two TimeRange's: A ⋂ B.
+        """
+        raise NotImplementedError()
+
     @property
-    def as_timedelta(self) -> timedelta:
-        return sum([p.as_timedelta for p in self._periods], start=timedelta())
+    def to_timedelta(self) -> timedelta:
+        return sum([p.to_timedelta for p in self._periods], start=timedelta())
+
+# class CalendarMonth(TimeRange):
+#     """
+#     Represent a calendar month.
+#     """
+#
+#     def __init__(self, year: int, month: int):
+#         start = date(year, month, 1)
+#         end = self._last_date_of_month(year, month)
+#         super().__init__(start, end)
+#         self.year = year
+#         self.month = month
+#         self.days_count = calendar.monthrange(year, month)[1]
+#
+#     def __repr__(self):
+#         return f'CalendarMonth(year={self.year}, month={self.month})'
+#
+#     def next(self) -> CalendarMonth:
+#         """Return an instance of next month."""
+#         first_day_in_next_month = self.end_date + datetime.timedelta(days=1)
+#         return CalendarMonth(first_day_in_next_month.year, first_day_in_next_month.month)
+#
+#     def prev(self) -> CalendarMonth:
+#         """Return an instance of previous month."""
+#         last_day_in_previous_month = self.start_date - datetime.timedelta(days=1)
+#         return CalendarMonth(last_day_in_previous_month.year, last_day_in_previous_month.month)
+#
+#     @staticmethod
+#     def _last_date_of_month(year: int, month: int) -> datetime.date:
+#         _, last_day = calendar.monthrange(year, month)
+#         return date(year, month, last_day)
