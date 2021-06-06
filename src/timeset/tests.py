@@ -1,5 +1,6 @@
 import unittest
 from datetime import datetime, timedelta
+from unittest import TestCase
 
 from timeset import TimeRange, ContinuousTimeRange
 
@@ -155,6 +156,16 @@ class TimeRangeAdditionTest(unittest.TestCase):
         t1 = TimeRange(start=datetime(*date, 12), duration=timedelta(hours=3))
         t2 = TimeRange(start=datetime(*date, 13), duration=timedelta(hours=3))
         self.assertEqual((t1 + t2).to_timedelta, timedelta(hours=4))
+
+
+class TimeRangeStartEndTest(TestCase):
+    compound_timerange = TimeRange(start, datetime(*date, 13, 12)) + TimeRange(datetime(*date, 13, 22), end)
+
+    def test_start(self):
+        self.assertEqual(self.compound_timerange.start, start)
+
+    def test_end(self):
+        self.assertEqual(self.compound_timerange.end, end)
 
 
 if __name__ == '__main__':

@@ -120,6 +120,20 @@ class TimeRange:
     def to_timedelta(self) -> timedelta:
         return sum([p.to_timedelta for p in self._periods], start=timedelta())
 
+    @property
+    def start(self) -> datetime:
+        """
+        Return the earliest moment in the TimeRange.
+        """
+        return min({p.start for p in self._periods})
+
+    @property
+    def end(self) -> datetime:
+        """
+        Return the latest moment in the TimeRange.
+        """
+        return max({p.end for p in self._periods})
+
 # class CalendarMonth(TimeRange):
 #     """
 #     Represent a calendar month.
