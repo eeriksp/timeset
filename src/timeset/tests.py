@@ -168,6 +168,23 @@ class TimeRangeStartEndTest(TestCase):
         self.assertEqual(self.compound_timerange.end, end)
 
 
+class TimeRangeIntersectionTest(TestCase):
+    def test_intersection(self):
+        t1 = TimeRange(start=datetime(*date, 12), end=datetime(*date, 14))
+        t2 = TimeRange(start=datetime(*date, 13), end=datetime(*date, 15))
+        self.assertEqual(t1 & t2, TimeRange(start=datetime(*date, 13), end=datetime(*date, 14)))
+
+    def test_no_intersection(self):
+        t1 = TimeRange(start=datetime(*date, 12), end=datetime(*date, 14))
+        t2 = TimeRange(start=datetime(*date, 18), end=datetime(*date, 20))
+        self.assertEqual(t1 & t2, TimeRange())
+
+    def test_one_moment_intersection(self):
+        t1 = TimeRange(start=datetime(*date, 12), end=datetime(*date, 14))
+        t2 = TimeRange(start=datetime(*date, 14), end=datetime(*date, 20))
+        self.assertEqual(t1 & t2, TimeRange(start=datetime(*date, 14), end=datetime(*date, 14)))
+
+
 class CalendarMonthTest(TestCase):
     def test_init(self):
         month = CalendarMonth(year=2021, month=10)

@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import calendar
+import operator
 from dataclasses import dataclass
 from datetime import datetime, date, timedelta, time
+from functools import reduce
 from typing import overload, Optional, Set
 
 
@@ -93,7 +95,7 @@ class TimeRange:
     def __contains__(self, moment: datetime) -> bool:
         return any([moment in p for p in self._periods])
 
-    def __add__(self, other) -> TimeRange:
+    def __add__(self, other: TimeRange) -> TimeRange:
         """
         Find the union of the two TimeRange's: A ⋃ B.
         """
@@ -112,25 +114,32 @@ class TimeRange:
         result._periods = intersectionless_periods
         return result
 
-    # def __and__(self, other: TimeRange) -> Optional[TimeRange]:
-    #     """
-    #     Find the intersection of the two TimeRange's: A ⋂ B.
-    #     """
-    #     raise NotImplementedError()
+    def __and__(self, other: TimeRange) -> TimeRange:
+        """
+        Find the intersection of the two TimeRange's: A ⋂ B.
+        """
+        if type(self) != type(other):
+            return NotImplemented
+        # Compute the Cartesian product and find all intersections
+        intersections = {s & o for s in self._periods for o in other._periods}
+        intersections.discard(None)
+        # TODO on next line switch from [] compasion to {} comparison
+        #  after TimeRange has been made hashable
+        return reduce(operator.add, [TimeRange(t.start, t.end) for t in intersections], TimeRange())
 
     @property
     def length(self) -> timedelta:
         return sum([p.length for p in self._periods], start=timedelta())
 
     @property
-    def start(self) -> datetime:
+    def start(self) -> datetime:  # FIXME ca it be None if TimeRange is empty
         """
         Return the earliest moment in the TimeRange.
         """
         return min({p.start for p in self._periods})
 
     @property
-    def end(self) -> datetime:
+    def end(self) -> datetime:  # FIXME ca it be None if TimeRange is empty
         """
         Return the latest moment in the TimeRange.
         """
