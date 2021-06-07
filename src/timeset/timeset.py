@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 import calendar
-from abc import abstractmethod, abstractproperty
 from dataclasses import dataclass
-from datetime import datetime, date, timedelta
-from typing import overload, Optional, Set, Protocol
+from datetime import datetime, date, timedelta, time
+from typing import overload, Optional, Set
 
 
 @dataclass(frozen=True)
@@ -77,6 +76,9 @@ class TimeRange:
         if start:
             self._periods.add(ContinuousTimeRange(start, end or start + duration))
 
+    def __eq__(self, other: TimeRange) -> bool:
+        return self._periods == other._periods
+
     def __repr__(self) -> str:
         return ' + '.join(
             [f"TimeRange(start={repr(p.start)}, end={repr(p.end)})" for p in self._periods]
@@ -110,11 +112,11 @@ class TimeRange:
         result._periods = intersectionless_periods
         return result
 
-    def __and__(self, other: TimeRange) -> Optional[TimeRange]:
-        """
-        Find the intersection of the two TimeRange's: A ⋂ B.
-        """
-        raise NotImplementedError()
+    # def __and__(self, other: TimeRange) -> Optional[TimeRange]:
+    #     """
+    #     Find the intersection of the two TimeRange's: A ⋂ B.
+    #     """
+    #     raise NotImplementedError()
 
     @property
     def to_timedelta(self) -> timedelta:
@@ -134,33 +136,39 @@ class TimeRange:
         """
         return max({p.end for p in self._periods})
 
-# class CalendarMonth(TimeRange):
-#     """
-#     Represent a calendar month.
-#     """
-#
-#     def __init__(self, year: int, month: int):
-#         start = date(year, month, 1)
-#         end = self._last_date_of_month(year, month)
-#         super().__init__(start, end)
-#         self.year = year
-#         self.month = month
-#         self.days_count = calendar.monthrange(year, month)[1]
-#
-#     def __repr__(self):
-#         return f'CalendarMonth(year={self.year}, month={self.month})'
-#
-#     def next(self) -> CalendarMonth:
-#         """Return an instance of next month."""
-#         first_day_in_next_month = self.end_date + datetime.timedelta(days=1)
-#         return CalendarMonth(first_day_in_next_month.year, first_day_in_next_month.month)
-#
-#     def prev(self) -> CalendarMonth:
-#         """Return an instance of previous month."""
-#         last_day_in_previous_month = self.start_date - datetime.timedelta(days=1)
-#         return CalendarMonth(last_day_in_previous_month.year, last_day_in_previous_month.month)
-#
-#     @staticmethod
-#     def _last_date_of_month(year: int, month: int) -> datetime.date:
-#         _, last_day = calendar.monthrange(year, month)
-#         return date(year, month, last_day)
+
+class CalendarMonth(TimeRange):
+    """
+    Represent a calendar month.
+    """
+
+    def __init__(self, year: int, month: int):
+        start_date = date(year, month, 1)
+        end_date = self._last_date_of_month(year, month)
+        super().__init__(self._to_datetime(start_date), self._to_datetime(end_date))
+        self.year = year
+        self.month = month
+
+    def __repr__(self):
+        return f'CalendarMonth(year={self.year}, month={self.month})'
+
+    @property
+    def next(self) -> CalendarMonth:
+        """Return an instance of next month."""
+        first_day_in_next_month = self.end.date() + timedelta(days=1)
+        return CalendarMonth(first_day_in_next_month.year, first_day_in_next_month.month)
+
+    @property
+    def prev(self) -> CalendarMonth:
+        """Return an instance of previous month."""
+        last_day_in_previous_month = self.start.date() - timedelta(days=1)
+        return CalendarMonth(last_day_in_previous_month.year, last_day_in_previous_month.month)
+
+    @staticmethod
+    def _last_date_of_month(year: int, month: int) -> datetime.date:
+        _, last_day = calendar.monthrange(year, month)
+        return date(year, month, last_day)
+
+    @staticmethod
+    def _to_datetime(d: date) -> datetime:
+        return datetime.combine(d, time.min)

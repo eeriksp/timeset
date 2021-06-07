@@ -2,7 +2,7 @@ import unittest
 from datetime import datetime, timedelta
 from unittest import TestCase
 
-from timeset import TimeRange, ContinuousTimeRange
+from timeset import ContinuousTimeRange, TimeRange, CalendarMonth
 
 date = (2021, 5, 20)
 start = datetime(*date, 12, 12)
@@ -166,6 +166,26 @@ class TimeRangeStartEndTest(TestCase):
 
     def test_end(self):
         self.assertEqual(self.compound_timerange.end, end)
+
+
+class CalendarMonthTest(TestCase):
+    def test_init(self):
+        month = CalendarMonth(year=2021, month=10)
+        self.assertEqual(month.year, 2021)
+        self.assertEqual(month.month, 10)
+        self.assertTrue(datetime(2021, 9, 1) not in month)
+        self.assertTrue(datetime(2021, 10, 10) in month)
+        self.assertTrue(datetime(2021, 11, 1) not in month)
+
+    def test_next(self):
+        month = CalendarMonth(year=2021, month=11)
+        self.assertEqual(month.next, CalendarMonth(year=2021, month=12))
+        self.assertEqual(month.next.next, CalendarMonth(year=2022, month=1))
+
+    def test_prev(self):
+        month = CalendarMonth(year=2021, month=2)
+        self.assertEqual(month.prev, CalendarMonth(year=2021, month=1))
+        self.assertEqual(month.prev.prev, CalendarMonth(year=2020, month=12))
 
 
 if __name__ == '__main__':
