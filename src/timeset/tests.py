@@ -29,8 +29,8 @@ class ContinuousTimeRangeTest(unittest.TestCase):
         self.assertFalse(datetime(*date, 22, 12) in self.timerange)
 
     def test_as_timedelta(self):
-        self.assertEqual(ContinuousTimeRange(start, start).to_timedelta, timedelta(hours=0))
-        self.assertEqual(self.timerange.to_timedelta, timedelta(hours=2))
+        self.assertEqual(ContinuousTimeRange(start, start).length, timedelta(hours=0))
+        self.assertEqual(self.timerange.length, timedelta(hours=2))
 
     def test_intersection(self):
         union1 = self.timerange & ContinuousTimeRange(datetime(*date, 13, 12), datetime(*date, 22, 12))
@@ -102,7 +102,7 @@ class TimeRangeInitializationTest(unittest.TestCase):
 
     def test_initialization_with_start_and_duration(self):
         t = TimeRange(start=start, duration=timedelta(hours=8))
-        self.assertEqual(t.to_timedelta, timedelta(hours=8))
+        self.assertEqual(t.length, timedelta(hours=8))
         self.assertTrue(start in t)
         self.assertTrue(start + timedelta(hours=8) in t)
 
@@ -124,11 +124,11 @@ class TimeRangeBooleanTest(unittest.TestCase):
 class TimeRangeTimedeltaTest(unittest.TestCase):
     def test_timedelta_two_hours(self):
         t = TimeRange(start=start, end=end)
-        self.assertEqual(t.to_timedelta, timedelta(hours=2))
+        self.assertEqual(t.length, timedelta(hours=2))
 
     def test_timedelta_zero(self):
         t = TimeRange()
-        self.assertEqual(t.to_timedelta, timedelta(hours=0))
+        self.assertEqual(t.length, timedelta(hours=0))
 
 
 class TimeRangeContainsTest(unittest.TestCase):
@@ -145,17 +145,17 @@ class TimeRangeAdditionTest(unittest.TestCase):
     def test_no_overlap(self):
         t1 = TimeRange(start=datetime(*date, 12), duration=timedelta(hours=2))
         t2 = TimeRange(start=datetime(*date, 16), duration=timedelta(hours=2))
-        self.assertEqual((t1 + t2).to_timedelta, timedelta(hours=4))
+        self.assertEqual((t1 + t2).length, timedelta(hours=4))
 
     def test_one_contains_another(self):
         t1 = TimeRange(start=datetime(*date, 12), duration=timedelta(hours=2))
         t2 = TimeRange(start=datetime(*date, 13), duration=timedelta(hours=1))
-        self.assertEqual((t1 + t2).to_timedelta, timedelta(hours=2))
+        self.assertEqual((t1 + t2).length, timedelta(hours=2))
 
     def test_overlap(self):
         t1 = TimeRange(start=datetime(*date, 12), duration=timedelta(hours=3))
         t2 = TimeRange(start=datetime(*date, 13), duration=timedelta(hours=3))
-        self.assertEqual((t1 + t2).to_timedelta, timedelta(hours=4))
+        self.assertEqual((t1 + t2).length, timedelta(hours=4))
 
 
 class TimeRangeStartEndTest(TestCase):

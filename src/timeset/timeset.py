@@ -19,7 +19,7 @@ class ContinuousTimeRange:
         return self.start <= moment <= self.end
 
     @property
-    def to_timedelta(self) -> timedelta:
+    def length(self) -> timedelta:
         return self.end - self.start
 
     def __and__(self, other: ContinuousTimeRange) -> Optional[ContinuousTimeRange]:
@@ -119,8 +119,8 @@ class TimeRange:
     #     raise NotImplementedError()
 
     @property
-    def to_timedelta(self) -> timedelta:
-        return sum([p.to_timedelta for p in self._periods], start=timedelta())
+    def length(self) -> timedelta:
+        return sum([p.length for p in self._periods], start=timedelta())
 
     @property
     def start(self) -> datetime:
