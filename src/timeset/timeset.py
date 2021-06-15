@@ -99,7 +99,7 @@ class TimeRange:
         """
         Find the union of the two TimeRange's: A ⋃ B.
         """
-        if type(self) != type(other):
+        if not isinstance(other, TimeRange):
             return NotImplemented
         intersectionless_periods: Set[ContinuousTimeRange] = set()
         for p in {*self._periods, *other._periods}:
