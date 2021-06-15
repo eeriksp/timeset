@@ -146,15 +146,36 @@ class TimeRange:
         return max({p.end for p in self._periods})
 
 
-class CalendarMonth(TimeRange):
+class DateRange(TimeRange):
+
+    def __init__(self, start_date: date, end_date: date):
+        super().__init__(self._to_datetime(start_date), self._to_datetime(end_date))
+
+    def __repr__(self) -> str:
+        return ' + '.join(
+            [f"DateRange(start_date={repr(p.start.date())}, end_date={repr(p.end.date())})" for p in self._periods]
+        ) or "DateRange()"
+
+    @staticmethod
+    def _to_datetime(d: date) -> datetime:
+        return datetime.combine(d, time.min)
+
+    @property
+    def start_date(self) -> date:  # FIXME can self.start be None?
+        return self.start.date()
+
+    @property
+    def end_date(self) -> date:  # FIXME can self.end be None?
+        return self.end.date()
+
+
+class CalendarMonth(DateRange):
     """
     Represent a calendar month.
     """
 
     def __init__(self, year: int, month: int):
-        start_date = date(year, month, 1)
-        end_date = self._last_date_of_month(year, month)
-        super().__init__(self._to_datetime(start_date), self._to_datetime(end_date))
+        super().__init__(start_date=date(year, month, 1), end_date=self._last_date_of_month(year, month))
         self.year = year
         self.month = month
 
@@ -177,7 +198,3 @@ class CalendarMonth(TimeRange):
     def _last_date_of_month(year: int, month: int) -> datetime.date:
         _, last_day = calendar.monthrange(year, month)
         return date(year, month, last_day)
-
-    @staticmethod
-    def _to_datetime(d: date) -> datetime:
-        return datetime.combine(d, time.min)
