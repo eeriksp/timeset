@@ -7,6 +7,20 @@ from datetime import datetime, date, timedelta, time
 from functools import reduce
 from typing import overload, Optional, Set
 
+try:
+    from django.utils.timezone import is_aware, make_aware
+except ImportError:
+    def is_aware(value: datetime) -> bool:
+        return True
+
+
+    def make_aware(value: datetime) -> datetime:
+        return value
+
+
+def ensure_aware(value: datetime) -> datetime:
+    return value if is_aware(value) else make_aware(value)
+
 
 @dataclass(frozen=True)
 class ContinuousTimeRange:
@@ -14,6 +28,8 @@ class ContinuousTimeRange:
     end: datetime
 
     def __post_init__(self):
+        object.__setattr__(self, 'start', ensure_aware(self.start))
+        object.__setattr__(self, 'end', ensure_aware(self.end))
         if self.start > self.end:
             raise ValueError("Start cannot be later than end.")
 
@@ -161,11 +177,11 @@ class DateRange(TimeRange):
     def _to_datetime(d: date) -> datetime:
         return datetime.combine(d, time.min)
 
-    @property
+    @property  # TODO TEST
     def start_date(self) -> date:  # FIXME can self.start be None?
         return self.start.date()
 
-    @property
+    @property  # TODO TEST
     def end_date(self) -> date:  # FIXME can self.end be None?
         return self.end.date()
 

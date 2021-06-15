@@ -4,7 +4,7 @@ set -eu
 python3 src/timeset/tests.py
 
 # Remove old builds
-rm dist -r
+rm dist -r || true
 
 # Build
 python -m build
