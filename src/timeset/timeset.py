@@ -118,7 +118,7 @@ class TimeRange:
         """
         Find the intersection of the two TimeRange's: A ⋂ B.
         """
-        if type(self) != type(other):
+        if not isinstance(other, TimeRange):
             return NotImplemented
         # Compute the Cartesian product and find all intersections
         intersections = {s & o for s in self._periods for o in other._periods}
