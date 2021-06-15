@@ -148,7 +148,8 @@ class TimeRange:
 
 class DateRange(TimeRange):
 
-    def __init__(self, start_date: date, end_date: date):
+    def __init__(self, start_date: date, end_date: Optional[date] = None):
+        end_date = end_date or start_date
         super().__init__(self._to_datetime(start_date), self._to_datetime(end_date))
 
     def __repr__(self) -> str:
