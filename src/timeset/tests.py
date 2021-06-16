@@ -2,7 +2,10 @@ import unittest
 from datetime import datetime, timedelta
 from unittest import TestCase
 
-from timeset import ContinuousTimeRange, TimeRange, CalendarMonth
+from .continuous import ContinuousTimeRange
+from .timerange import TimeRange
+from .daterange import date_range
+from .month import CalendarMonth
 
 date = (2021, 5, 20)
 start = datetime(*date, 12, 12)
@@ -100,11 +103,20 @@ class TimeRangeInitializationTest(unittest.TestCase):
         t = TimeRange(start=start, end=end)
         self.assertEqual(str(t), string_repr)
 
+    def test_initialization_with_start_and_end_as_dates(self):
+        string = "TimeRange(start=datetime.datetime(2021, 5, 20, 0, 0), end=datetime.datetime(2021, 5, 21, 23, 59, 59, 999999))"
+        self.assertEqual(str(date_range(start=datetime(2021, 5, 20), end=datetime(2021, 5, 21))), string)
+
     def test_initialization_with_start_and_duration(self):
         t = TimeRange(start=start, duration=timedelta(hours=8))
         self.assertEqual(t.length, timedelta(hours=8))
         self.assertTrue(start in t)
         self.assertTrue(start + timedelta(hours=8) in t)
+
+    def test_initialization_with_start_and_duration_from_dates(self):
+        string = "TimeRange(start=datetime.datetime(2021, 5, 20, 0, 0), end=datetime.datetime(2021, 5, 21, 23, 59, 59, 999999))"
+        self.assertEqual(str(date_range(start=datetime(2021, 5, 20), days=1)), string)
+
 
     def test_start_end_integrity(self):
         with self.assertRaises(ValueError):

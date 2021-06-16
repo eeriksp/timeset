@@ -1,1 +1,1 @@
-python3 src/timeset/tests.py
+(cd src && python3 -m timeset.tests)
