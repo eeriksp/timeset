@@ -6,11 +6,15 @@ from .utils import preclude
 
 
 # TODO TEST
-def date_range(start: date, end: Optional[date] = None, days: Optional[int] = None) -> TimeRange:
-    preclude(end is None and days is None, TypeError, 'Either `end` or duration as `days` must be given.')
+def daterange(start: date, end: Optional[date] = None, days: Optional[int] = None) -> TimeRange:
     preclude(end is not None and days is not None, TypeError, 'Only one of `end` `days` can be given.')
-    end = end or start + timedelta(days=days)
-    return TimeRange(first_moment_in_day(start), last_moment_in_day(end))
+    if end is not None:
+        end_time = end
+    elif days is not None:
+        end_time = end or start + timedelta(days=days)
+    else:
+        end_time = start
+    return TimeRange(first_moment_in_day(start), last_moment_in_day(end_time))
 
 
 def first_moment_in_day(d: date, /) -> datetime:

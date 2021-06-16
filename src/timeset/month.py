@@ -4,7 +4,7 @@ from calendar import monthrange
 from datetime import timedelta, date
 
 from .timerange import TimeRange
-from .daterange import date_range
+from .date_range import daterange
 
 
 class CalendarMonth(TimeRange):
@@ -13,8 +13,8 @@ class CalendarMonth(TimeRange):
     """
 
     def __init__(self, year: int, month: int):
-        daterange = date_range(start=date(year, month, 1), end=self._last_date_of_month(year, month))
-        super().__init__(start=daterange.start, end=daterange.end)
+        date_range = daterange(start=date(year, month, 1), end=self._last_date_of_month(year, month))
+        super().__init__(start=date_range.start, end=date_range.end)
         self.year = year
         self.month = month
 

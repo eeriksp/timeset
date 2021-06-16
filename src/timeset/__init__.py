@@ -1,3 +1,3 @@
 from .timerange import TimeRange
-from .daterange import date_range
+from .date_range import daterange
 from .month import CalendarMonth
