@@ -90,19 +90,19 @@ class TimeRange:
         """
         Return the earliest moment in the TimeRange.
         """
-        return min({p.start for p in self.intervals}) if self.intervals else None
+        return min({p.start for p in self.intervals}) if self else None
 
     @property
     def end(self) -> Optional[datetime]:
         """
         Return the latest moment in the TimeRange.
         """
-        return max({p.end for p in self.intervals}) if self.intervals else None
+        return max({p.end for p in self.intervals}) if self else None
 
-    @property  # TODO TEST
-    def start_date(self) -> date:  # FIXME can self.start be None?
-        return self.start.date()
+    @property
+    def start_date(self) -> Optional[date]:
+        return self.start.date() if self else None
 
-    @property  # TODO TEST
-    def end_date(self) -> date:  # FIXME can self.end be None?
-        return self.end.date()
+    @property
+    def end_date(self) -> Optional[date]:
+        return self.end.date() if self else None

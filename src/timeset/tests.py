@@ -184,6 +184,18 @@ class TimeRangeStartEndTest(TestCase):
     def test_empty_timerange_end(self):
         self.assertEqual(TimeRange().end, None)
 
+    def test_start_date(self):
+        self.assertEqual(self.compound_timerange.start_date, start.date())
+
+    def test_empty_timerange_start_date(self):
+        self.assertEqual(TimeRange().start_date, None)
+
+    def test_end_date(self):
+        self.assertEqual(self.compound_timerange.end_date, end.date())
+
+    def test_empty_timerange_end_date(self):
+        self.assertEqual(TimeRange().end_date, None)
+
 
 class TimeRangeIntersectionTest(TestCase):
     def test_intersection(self):
