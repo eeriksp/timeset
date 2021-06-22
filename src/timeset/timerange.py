@@ -86,18 +86,18 @@ class TimeRange:
         return sum([p.length for p in self.intervals], start=timedelta())
 
     @property
-    def start(self) -> datetime:  # FIXME ca it be None if TimeRange is empty
+    def start(self) -> Optional[datetime]:
         """
         Return the earliest moment in the TimeRange.
         """
-        return min({p.start for p in self.intervals})
+        return min({p.start for p in self.intervals}) if self.intervals else None
 
     @property
-    def end(self) -> datetime:  # FIXME ca it be None if TimeRange is empty
+    def end(self) -> Optional[datetime]:
         """
         Return the latest moment in the TimeRange.
         """
-        return max({p.end for p in self.intervals})
+        return max({p.end for p in self.intervals}) if self.intervals else None
 
     @property  # TODO TEST
     def start_date(self) -> date:  # FIXME can self.start be None?

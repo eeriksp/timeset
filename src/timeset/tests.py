@@ -117,7 +117,6 @@ class TimeRangeInitializationTest(unittest.TestCase):
         string = "TimeRange(start=datetime.datetime(2021, 5, 20, 0, 0), end=datetime.datetime(2021, 5, 21, 23, 59, 59, 999999))"
         self.assertEqual(str(daterange(start=datetime(2021, 5, 20), days=1)), string)
 
-
     def test_start_end_integrity(self):
         with self.assertRaises(ValueError):
             TimeRange(start=end, end=start)
@@ -176,8 +175,14 @@ class TimeRangeStartEndTest(TestCase):
     def test_start(self):
         self.assertEqual(self.compound_timerange.start, start)
 
+    def test_empty_timerange_start(self):
+        self.assertEqual(TimeRange().start, None)
+
     def test_end(self):
         self.assertEqual(self.compound_timerange.end, end)
+
+    def test_empty_timerange_end(self):
+        self.assertEqual(TimeRange().end, None)
 
 
 class TimeRangeIntersectionTest(TestCase):
