@@ -62,14 +62,14 @@ Check if the TimeSet is **empty** (`False` indicates an empty `TimeSet`, `True` 
 True
 ```
 
-Find the **union** of the `TimeSet`s:
+Find the **union (`+`)** of the `TimeSet`s:
 ```pycon
 >>> other_start = end + timedelta(hours=1)
 >>> TimeSet(start, end) + TimeSet(other_start , duration=timedelta(hours=1))
 TimeSet(start=datetime.datetime(2022, 6, 30, 16, 0), end=datetime.datetime(2022, 6, 30, 17, 0)) + TimeSet(start=datetime.datetime(2022, 6, 30, 12, 0), end=datetime.datetime(2022, 6, 30, 15, 0))
 ```
 
-Find the **intersection** of the `TimeSet`s:
+Find the **intersection (`&`)** of the `TimeSet`s:
 ```pycon
 >>> other_start = end - timedelta(hours=1)
 >>> TimeSet(start, end) & TimeSet(other_start , duration=timedelta(hours=3))
