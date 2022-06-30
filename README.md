@@ -80,3 +80,11 @@ Find the **intersection (`&`)** of the `TimeSet`s:
 >>> TimeSet(start, end) & TimeSet(other_start , duration=timedelta(hours=3))
 TimeSet(start=datetime.datetime(2022, 6, 30, 14, 0), end=datetime.datetime(2022, 6, 30, 15, 0))
 ```
+
+### Other methods
+
+## Who uses `timeset`
+
+[HeedView](https://heedview.ee/)
+
+![HeedView logo](https://heedview.ee/img/logo.png | width=100)
