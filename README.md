@@ -83,6 +83,46 @@ TimeSet(start=datetime.datetime(2022, 6, 30, 14, 0), end=datetime.datetime(2022,
 
 ### Other methods
 
+Get the **length** of a `Timeset` as a `timedelta`:
+
+```pycon
+>>> TimeSet(start, end).length
+datetime.timedelta(seconds=10800)
+>>> TimeSet().length
+datetime.timedelta(0)
+```
+
+Get the **start** of the `Timeset` (`None` if the `Timeset` is empty):
+
+```pycon
+>>> TimeSet(start, end).start
+datetime.datetime(2022, 6, 30, 12, 0)
+>>> TimeSet().start
+None # the console does not actully print `None` out
+```
+
+Get the **end** of the `Timeset` (`None` if the `Timeset` is empty):
+
+```pycon
+>>> TimeSet(start, end).end
+datetime.datetime(2022, 6, 30, 15, 0)
+>>> TimeSet().end
+None # the console does not actully print `None` out
+```
+
+Convenience methods `start_date` and `end_date` are also provided:
+
+```pycon
+>>> TimeSet(start, end).start_date
+datetime.date(2022, 6, 30)
+>>> TimeSet(start, end).end_date
+datetime.date(2022, 6, 30)
+>>> TimeSet().start_date
+None # the console does not actully print `None` out
+>>> TimeSet().end_date
+None # the console does not actully print `None` out
+```
+
 ## Who uses `timeset`
 
 [HeedView](https://heedview.ee/)
