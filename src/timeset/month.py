@@ -3,11 +3,11 @@ from __future__ import annotations
 from calendar import monthrange
 from datetime import timedelta, date
 
-from .timerange import TimeRange
+from .timeset import TimeSet
 from .date_range import daterange
 
 
-class CalendarMonth(TimeRange):
+class CalendarMonth(TimeSet):
     """
     Represent a calendar month.
     """

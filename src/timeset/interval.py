@@ -8,7 +8,7 @@ from .awareness import ensure_aware
 
 
 @dataclass(frozen=True)
-class ContinuousTimeRange:
+class TimeInterval:
     """
     Represent a continuous period of time from `start` to `end`.
     """
@@ -28,17 +28,7 @@ class ContinuousTimeRange:
     def length(self) -> timedelta:
         return self.end - self.start
 
-    def __and__(self, other: ContinuousTimeRange) -> Optional[ContinuousTimeRange]:
-        """
-        Return the intersection of `self` (S) and `other` (O): S ∩ O.
-        """
-        if type(self) != type(other):
-            return NotImplemented
-        if not has_intersection(self, other):
-            return None
-        return ContinuousTimeRange(max(self.start, other.start), min(self.end, other.end))
-
-    def __add__(self, other) -> Optional[ContinuousTimeRange]:
+    def __add__(self, other) -> Optional[TimeInterval]:
         """
         Return the union of `self` (S) and `other` (O): S ∪ O.
         """
@@ -46,7 +36,17 @@ class ContinuousTimeRange:
             return NotImplemented
         if not has_intersection(self, other):
             return None
-        return ContinuousTimeRange(min(self.start, other.start), max(self.end, other.end))
+        return TimeInterval(min(self.start, other.start), max(self.end, other.end))
+
+    def __and__(self, other: TimeInterval) -> Optional[TimeInterval]:
+        """
+        Return the intersection of `self` (S) and `other` (O): S ∩ O.
+        """
+        if type(self) != type(other):
+            return NotImplemented
+        if not has_intersection(self, other):
+            return None
+        return TimeInterval(max(self.start, other.start), min(self.end, other.end))
 
     def __ge__(self, other) -> bool:  # TODO TEST
         """
@@ -61,7 +61,7 @@ class ContinuousTimeRange:
         return other.start <= self.start and self.end <= other.end
 
 
-def has_intersection(a: ContinuousTimeRange, b: ContinuousTimeRange) -> bool:
+def has_intersection(a: TimeInterval, b: TimeInterval) -> bool:
     """
     Indicates whether `a` and `b` have an intersection, any points belonging to both sets.
     """

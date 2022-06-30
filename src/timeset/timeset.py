@@ -5,11 +5,11 @@ import operator
 from functools import reduce
 from datetime import datetime, date, timedelta
 
-from .continuous import ContinuousTimeRange, has_intersection
+from .interval import TimeInterval, has_intersection
 
 
-class TimeRange:
-    intervals: FrozenSet[ContinuousTimeRange] = frozenset()
+class TimeSet:
+    intervals: FrozenSet[TimeInterval] = frozenset()
 
     @overload
     def __init__(self):
@@ -30,32 +30,32 @@ class TimeRange:
             raise ValueError("Allowed combination of constructor parameters are:\n  "
                              "* Empty constructor\n  * `start` & `end`\n  * `start` & `duration`")
         if start:
-            self.intervals = frozenset({ContinuousTimeRange(start, end or start + duration)})
+            self.intervals = frozenset({TimeInterval(start, end or start + duration)})
 
-    def __eq__(self, other: TimeRange) -> bool:
+    def __eq__(self, other: TimeSet) -> bool:
         return self.intervals == other.intervals
 
     def __repr__(self) -> str:
         return ' + '.join(
-            [f"TimeRange(start={repr(p.start)}, end={repr(p.end)})" for p in self.intervals]
-        ) or "TimeRange()"
+            [f"TimeSet(start={repr(p.start)}, end={repr(p.end)})" for p in self.intervals]
+        ) or "TimeSet()"
 
     def __bool__(self) -> bool:
         """
-        A TimeRange evaluates to True if its duration is grater than zero.
+        A TimeSet evaluates to True if its duration is grater than zero.
         """
         return len(self.intervals) != 0
 
     def __contains__(self, moment: datetime) -> bool:
         return any([moment in p for p in self.intervals])
 
-    def __add__(self, other: TimeRange) -> TimeRange:
+    def __add__(self, other: TimeSet) -> TimeSet:
         """
-        Find the union of the two TimeRange's: A ⋃ B.
+        Return the union of `self` (S) and `other` (O): S ∪ O.
         """
-        if not isinstance(other, TimeRange):
+        if not isinstance(other, TimeSet):
             return NotImplemented
-        intersectionless_periods: Set[ContinuousTimeRange] = set()
+        intersectionless_periods: Set[TimeInterval] = set()
         for p in {*self.intervals, *other.intervals}:
             for per in intersectionless_periods:
                 if has_intersection(p, per):
@@ -64,22 +64,22 @@ class TimeRange:
                     break
             else:
                 intersectionless_periods.add(p)
-        result = TimeRange()
+        result = TimeSet()
         result.intervals = intersectionless_periods
         return result
 
-    def __and__(self, other: TimeRange) -> TimeRange:
+    def __and__(self, other: TimeSet) -> TimeSet:
         """
-        Find the intersection of the two TimeRange's: A ⋂ B.
+        Return the intersection of `self` (S) and `other` (O): S ∩ O.
         """
-        if not isinstance(other, TimeRange):
+        if not isinstance(other, TimeSet):
             return NotImplemented
         # Compute the Cartesian product and find all intersections
         intersections = {s & o for s in self.intervals for o in other.intervals}
         intersections.discard(None)
         # TODO on next line switch from [] compasion to {} comparison
         #  after TimeRange has been made hashable
-        return reduce(operator.add, [TimeRange(t.start, t.end) for t in intersections], TimeRange())
+        return reduce(operator.add, [TimeSet(t.start, t.end) for t in intersections], TimeSet())
 
     @property
     def length(self) -> timedelta:
