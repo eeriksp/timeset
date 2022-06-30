@@ -41,6 +41,11 @@ TimeSet(start=datetime.datetime(2022, 6, 30, 12, 0), end=datetime.datetime(2022,
 TimeSet(start=datetime.datetime(2022, 6, 30, 12, 0), end=datetime.datetime(2022, 6, 30, 15, 0))
 ```
 
+As seen above all the instantiation method create a continuous `TimeSet` consisting of only one interval (or zero intervals). `TimeSet`s which hold multiple intervals are created by adding their parts together using the `+` operator (more on that below).
+
+This is a design decision: we considered `TimeSet(a, b) + TimeSet(c, d)` to be more readable that one longer constructor such as `TimeSet(intervals={[a, b], [c, d]})`.
+(If you disagree, feel free to open an issue, this choice is not carved in stone).
+
 ### Set operations with `TimeSet`s
 
 Check if two `TimeSet`s are **equal** (if they include the exact same points):
