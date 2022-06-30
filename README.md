@@ -43,21 +43,35 @@ TimeSet(start=datetime.datetime(2022, 6, 30, 12, 0), end=datetime.datetime(2022,
 
 ### Set operations with `TimeSet`s
 
-Check if two `TimeSet`s are equal (if they include the exact same points):
+Check if two `TimeSet`s are **equal** (if they include the exact same points):
 
 ```pycon
 >>> TimeSet(start, end) == TimeSet(start, duration=duration)
 True
 ```
 
-Check if a moment is in the TimeSet:
+Check if a moment is **in** the TimeSet:
 ```pycon
 >>> start in TimeSet(start, end)
 True
 ```
 
-Check if the TimeSet is empty (`False` indicates an empty `TimeSet`, `True` indicates a nonempty `TimeSet`):
+Check if the TimeSet is **empty** (`False` indicates an empty `TimeSet`, `True` indicates a nonempty `TimeSet`):
 ```pycon
 >>> bool(TimeSet(start, end))
 True
+```
+
+Find the **union** of the `TimeSet`s:
+```pycon
+>>> other_start = end + timedelta(hours=1)
+>>> TimeSet(start, end) + TimeSet(other_start , duration=timedelta(hours=1))
+TimeSet(start=datetime.datetime(2022, 6, 30, 16, 0), end=datetime.datetime(2022, 6, 30, 17, 0)) + TimeSet(start=datetime.datetime(2022, 6, 30, 12, 0), end=datetime.datetime(2022, 6, 30, 15, 0))
+```
+
+Find the **intersection** of the `TimeSet`s:
+```pycon
+>>> other_start = end - timedelta(hours=1)
+>>> TimeSet(start, end) & TimeSet(other_start , duration=timedelta(hours=3))
+TimeSet(start=datetime.datetime(2022, 6, 30, 14, 0), end=datetime.datetime(2022, 6, 30, 15, 0))
 ```
