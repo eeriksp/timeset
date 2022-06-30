@@ -1,8 +1,8 @@
 import unittest
-from datetime import datetime, timedelta
 from unittest import TestCase
+from datetime import datetime, timedelta
 
-from .continuous import ContinuousTimeRange
+from .continuous import ContinuousTimeRange, has_intersection
 from .timerange import TimeRange
 from .date_range import daterange
 from .month import CalendarMonth
@@ -51,19 +51,19 @@ class ContinuousTimeRangeTest(unittest.TestCase):
 
     def test_intersects_with(self):
         # Partial intersection
-        self.assertTrue(self.timerange.intersects_with(
+        self.assertTrue(has_intersection(self.timerange,
             ContinuousTimeRange(datetime(*date, 13, 12), datetime(*date, 15, 12))))
 
         # Self contains other
-        self.assertTrue(self.timerange.intersects_with(
+        self.assertTrue(has_intersection(self.timerange,
             ContinuousTimeRange(datetime(*date, 12, 19), datetime(*date, 13, 12))))
 
         # Other contains self
-        self.assertTrue(self.timerange.intersects_with(
+        self.assertTrue(has_intersection(self.timerange,
             ContinuousTimeRange(datetime(*date, 11, 12), datetime(*date, 18, 12))))
 
     def test_does_not_intersect_with(self):
-        self.assertFalse(self.timerange.intersects_with(
+        self.assertFalse(has_intersection(self.timerange,
             ContinuousTimeRange(datetime(*date, 18, 12), datetime(*date, 19, 12))))
 
     def test_equality(self):

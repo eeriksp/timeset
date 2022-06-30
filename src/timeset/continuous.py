@@ -9,6 +9,9 @@ from .awareness import ensure_aware
 
 @dataclass(frozen=True)
 class ContinuousTimeRange:
+    """
+    Represent a continuous period of time from `start` to `end`.
+    """
     start: datetime
     end: datetime
 
@@ -26,30 +29,40 @@ class ContinuousTimeRange:
         return self.end - self.start
 
     def __and__(self, other: ContinuousTimeRange) -> Optional[ContinuousTimeRange]:
+        """
+        Return the intersection of `self` (S) and `other` (O): S ∩ O.
+        """
         if type(self) != type(other):
             return NotImplemented
-        if not self.intersects_with(other):
+        if not has_intersection(self, other):
             return None
         return ContinuousTimeRange(max(self.start, other.start), min(self.end, other.end))
 
     def __add__(self, other) -> Optional[ContinuousTimeRange]:
+        """
+        Return the union of `self` (S) and `other` (O): S ∪ O.
+        """
         if type(self) != type(other):
             return NotImplemented
-        if not self.intersects_with(other):
+        if not has_intersection(self, other):
             return None
         return ContinuousTimeRange(min(self.start, other.start), max(self.end, other.end))
 
     def __ge__(self, other) -> bool:  # TODO TEST
         """
-        Check if self (S) is a superset of other (O): S ⊇ O
+        Check if `self` (S) is a superset of `other` (O): S ⊇ O.
         """
         return self.start <= other.start and other.end <= self.end
 
     def __le__(self, other) -> bool:  # TODO TEST
         """
-        Check if self (S) is a subset of other (O): S ⊆ O
+        Check if `self` (S) is a subset of `other` (O): S ⊆ O.
         """
         return other.start <= self.start and self.end <= other.end
 
-    def intersects_with(self, other: ContinuousTimeRange) -> bool:
-        return other.start in self or other.end in self or self <= other
+
+def has_intersection(a: ContinuousTimeRange, b: ContinuousTimeRange) -> bool:
+    """
+    Indicates whether `a` and `b` have an intersection, any points belonging to both sets.
+    """
+    return b.start in a or b.end in a or a <= b

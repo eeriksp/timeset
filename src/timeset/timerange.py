@@ -5,7 +5,7 @@ import operator
 from functools import reduce
 from datetime import datetime, date, timedelta
 
-from .continuous import ContinuousTimeRange
+from .continuous import ContinuousTimeRange, has_intersection
 
 
 class TimeRange:
@@ -58,7 +58,7 @@ class TimeRange:
         intersectionless_periods: Set[ContinuousTimeRange] = set()
         for p in {*self.intervals, *other.intervals}:
             for per in intersectionless_periods:
-                if p.intersects_with(per):
+                if has_intersection(p, per):
                     intersectionless_periods.discard(per)
                     intersectionless_periods.add(p + per)
                     break
