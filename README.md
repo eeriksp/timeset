@@ -87,4 +87,6 @@ TimeSet(start=datetime.datetime(2022, 6, 30, 14, 0), end=datetime.datetime(2022,
 
 [HeedView](https://heedview.ee/)
 
-![HeedView logo](https://heedview.ee/img/logo.png | width=100)
+<img src="https://heedview.ee/img/logo.png" width="100px">
+
+(If you are using `timeset`, let us know by opening an issue and we will add you here!)
