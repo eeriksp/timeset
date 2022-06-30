@@ -55,3 +55,9 @@ Check if a moment is in the TimeSet:
 >>> start in TimeSet(start, end)
 True
 ```
+
+Check if the TimeSet is empty (`False` indicates an empty `TimeSet`, `True` indicates a nonempty `TimeSet`):
+```pycon
+>>> bool(TimeSet(start, end))
+True
+```
